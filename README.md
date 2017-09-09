@@ -22,3 +22,5 @@ Access `localhost:4100` for website.
 
 ### video path
 Store videos in folder `app/static`. See content for examples.
+
+# ElephantAnno
