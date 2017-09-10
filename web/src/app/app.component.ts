@@ -39,6 +39,7 @@ export class AppComponent {
   status_old = 0;
   status = 0;
   canvScale = 1;
+  cloest_bbox_id = -1;
   offset = { x: 0, y: 0 };
   mouseAbsPos = { x: 0, y: 0 };
   isMouseDown = false;
@@ -85,7 +86,24 @@ export class AppComponent {
     });
   }
 
+  // help function
+  getCloestBBox(coord) {
+    var cloest = -1;
+    var close_dist = 100000;
+    this.annotations.forEach((anno) => {
+      var mean_x = (anno.bbox[0] + anno.bbox[2]) / 2;
+      var mean_y = (anno.bbox[1] + anno.bbox[3]) / 2;
+      var dist = Math.sqrt(Math.pow(coord.x - mean_x, 2) + Math.pow(coord.y - mean_y, 2));
 
+      if(dist < close_dist) {
+        cloest = anno.id;
+        close_dist = dist;
+      }
+
+    });
+
+    return cloest;
+  }
 
   // annotation functions
   onAddBBox() {
@@ -199,6 +217,7 @@ export class AppComponent {
 
     canvas.addEventListener('mousemove', function (e) {
       this.mouseAbsPos = this.getAbsMouse(e);
+      this.cloest_bbox_id = this.getCloestBBox(this.mouseAbsPos);
       var mouseCanvPos = this.getMouseCanvPos(e);
 
       if (this.status == 0 && this.isMouseDown) {
@@ -213,7 +232,9 @@ export class AppComponent {
     }.bind(this));
 
     canvas.addEventListener('mousewheel', function (e) {
-      this.scale_canvas(this.canvScale - 0.001 * e.deltaY);
+      if (this.status == 0) {
+        this.scale_canvas(this.canvScale - 0.001 * e.deltaY);
+      }
 
       e.preventDefault();
     }.bind(this));
@@ -255,7 +276,7 @@ export class AppComponent {
         ctx.beginPath();
         ctx.setLineDash([]);
         ctx.lineWidth = radius * 0.5 / scale;
-        ctx.strokeStyle = '#ddddff';
+        ctx.strokeStyle = this.cloest_bbox_id != anno.id ? '#ddddff' : '0000ff';
 
         var pts_tl = this.getCanvPos({
           x: anno.bbox[0],
@@ -302,21 +323,21 @@ export class AppComponent {
 
         // draw connectivity
         var connectivity = [
-          [0,1],
-          [1,2],
-          [2,6],
-          [6,3],
-          [3,4],
-          [4,5],
-          [6,7],
-          [7,8],
-          [8,9],
-          [10,11],
-          [11,12],
-          [12,7],
-          [7,13],
-          [13,14],
-          [14,15],
+          [0, 1],
+          [1, 2],
+          [2, 6],
+          [6, 3],
+          [3, 4],
+          [4, 5],
+          [6, 7],
+          [7, 8],
+          [8, 9],
+          [10, 11],
+          [11, 12],
+          [12, 7],
+          [7, 13],
+          [13, 14],
+          [14, 15],
         ];
 
         connectivity.forEach(element => {
@@ -341,17 +362,14 @@ export class AppComponent {
           ctx.stroke();
         });
 
-        
+
         // draw bounding box id
         var font_size = 5 * radius / scale;
         ctx.font = font_size + "px Verdana";
-        ctx.fillStyle = 'blue';
+        ctx.fillStyle = 'yellow';
         ctx.fillText(anno.id, (pts_tl.x + pts_br.x) / 2, (pts_tl.y + pts_br.y) / 2);
 
       });
-
-
-
 
 
       // draw support line

@@ -37,42 +37,44 @@
       <button class='btn btn-default' (click)='onAddBBox()' [disabled]="isLoading">Add Box</button>
     </p>
     <div class="row">
-      <div class="col-sm-12" (window:resize)="onCanvResize($event)">
-        <canvas #annoCanvas width="900px" height="700px" style="margin: 0 auto; border: 1px solid">
+      <div class="col-sm-8" (window:resize)="onCanvResize($event)">
+        <canvas #annoCanvas width="650px" height="500px" style="margin: 0 auto; border: 1px solid">
           Canvas not supported.
         </canvas>
       </div>
-    </div>
-  </div>
-
-  <div class="panel panel-info">
-    <div class="panel-heading">Actions
-      <div class='pull-right'><button class='btn btn-sm btn-default' (click)='onAddBBox()' [disabled]="isLoading">+</button></div>
-    </div>
-    <div class="panel-body">
-
-      <div *ngFor="let anno of annotations; let i = index" class='row'>
-        <div class='col-sm-2'>
-          id: <input type="text" size=4 [value]='anno.id' (keyup)='anno.id=$event.target.value' />
-        </div>
-        <div class='col-sm-4'>
-          Bounding Box: {{anno.bbox[0]}},{{anno.bbox[1]}},{{anno.bbox[2]}},{{anno.bbox[3]}}
-        </div>
-        <div class='col-sm-4'>
-          <div *ngIf='anno.lms.length>0'>
-            Landmarks generater
+      <div class="col-sm-4">
+        <div class="panel panel-info">
+          <div class="panel-heading">Actions
+            <!-- <div class='pull-right'><button class='btn btn-sm btn-default' (click)='onAddBBox()' [disabled]="isLoading">+</button></div> -->
           </div>
-          <div *ngIf='anno.lms.length<=0'>
-            Waiting to generate Landmarks.
+          <div class="panel-body">
+
+            <div *ngFor="let anno of annotations; let i = index" class='row' [ngClass]="{'anno_active': anno.id==cloest_bbox_id}">
+
+              <div class='col-sm-4'>
+                id: <input size="2" type="text" [value]='anno.id' (keyup)='anno.id=$event.target.value' />
+              </div>
+              <div class='col-sm-4'>
+                <div *ngIf='anno.lms.length>0'>
+                  LMS
+                </div>
+                <div *ngIf='anno.lms.length<=0'>
+                  BBOX
+                </div>
+              </div>
+              <div class='col-sm-4'>
+                <a class='btn btn-danger' (click)="removeAnnotation(i)">Del</a>
+              </div>
+            </div>
+
+            <div *ngIf="isLoading; else noannotation">Loading</div>
+
           </div>
-        </div>
-        <div class='col-sm-2'>
-          <a class='btn btn-danger' (click)="removeAnnotation(i)">Del</a>
         </div>
       </div>
-      <div *ngIf="isLoading; else noannotation">Loading</div>
-
     </div>
   </div>
+
+
 </div>
 <!-- /container -->
