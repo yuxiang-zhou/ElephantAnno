@@ -1,4 +1,4 @@
-/homes/yz4009/wd/gitdev/DeepLearning/Applications/models/object_detection/test_images/image1.jpg
-/homes/yz4009/wd/gitdev/DeepLearning/Applications/models/object_detection/test_images/image2.jpg
-/homes/yz4009/wd/gitdev/DeepLearning/Applications/models/object_detection/test_images/image3.jpg
-/homes/yz4009/wd/gitdev/DeepLearning/Applications/models/object_detection/test_images/image4.jpg
+D:/gitdev/ElephantAnno/app/static/images/image1.jpg
+D:/gitdev/ElephantAnno/app/static/images/image2.jpg
+D:/gitdev/ElephantAnno/app/static/images/image3.jpg
+D:/gitdev/ElephantAnno/app/static/images/image4.jpg

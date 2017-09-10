@@ -1,12 +1,13 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+        aria-controls="navbar">
         <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
-        </button>
+      </button>
       <a class="navbar-brand" href="#">{{title}}</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
@@ -24,45 +25,54 @@
 
   <!-- Main jumbotron for a primary marketing message or call to action -->
   <div class="jumbotron">
-    <h1>Video</h1>
+    <h1>Data</h1>
     <p>Full Path: {{filename}}</p>
     <p>Index: <span>{{fileIndex+1}}</span>/<span>{{filelist.length}}</span></p>
-    <p> Goto Index: <input #indexInput type="text" [value]="fileIndex+1"/><button class='btn btn-default' [disabled]="isLoading" (click)="loadVideo(indexInput.value-1);" >Go</button></p>
+    <p> Goto Index: <input #indexInput type="text" [value]="fileIndex+1" /><button class='btn btn-default' [disabled]="isLoading"
+        (click)="loadData(indexInput.value-1);">Go</button></p>
     <p>
-      <button class='btn btn-default' [disabled]="fileIndex<=0||isLoading" (click)="saveAnnotation(fileIndex);loadVideo(fileIndex-1);" >Pre</button>
-      <button class='btn btn-default' [disabled]="fileIndex+1>=filelist.length||isLoading"  (click)="saveAnnotation(fileIndex);loadVideo(fileIndex+1);">Next</button>
-      <button class='btn btn-default' (click)="saveAnnotation(fileIndex)" [disabled]="annotations.length<=0||isLoading">Save</button>
+      <button class='btn btn-default' [disabled]="fileIndex<=0||isLoading" (click)="saveAnnotation(fileIndex);loadData(fileIndex-1);">Pre</button>
+      <button class='btn btn-default' [disabled]="fileIndex+1>=filelist.length||isLoading" (click)="saveAnnotation(fileIndex);loadData(fileIndex+1);">Next</button>
+      <button class='btn btn-default' (click)="saveAnnotation(fileIndex)" [disabled]="isLoading">Save</button>
+      <button class='btn btn-default' (click)='onAddBBox()' [disabled]="isLoading">Add Box</button>
     </p>
-    <video #annoVideo width="700" controls (loadedmetadata)='onVideoLoaded()' (timeupdate)='onVideoPlaying()'>
-        <source src='{{videoURL}}' type="video/mp4" />
-    </video>
+    <div class="row">
+      <div class="col-sm-12" (window:resize)="onCanvResize($event)">
+        <canvas #annoCanvas width="900px" height="700px" style="margin: 0 auto; border: 1px solid">
+          Canvas not supported.
+        </canvas>
+      </div>
+    </div>
   </div>
 
   <div class="panel panel-info">
     <div class="panel-heading">Actions
-      <div class='pull-right'><button class='btn btn-sm btn-default' (click)='addAnnotation()' [disabled]="isLoading">+</button></div>
+      <div class='pull-right'><button class='btn btn-sm btn-default' (click)='onAddBBox()' [disabled]="isLoading">+</button></div>
     </div>
     <div class="panel-body">
 
       <div *ngFor="let anno of annotations; let i = index" class='row'>
         <div class='col-sm-2'>
-          label: <input type="text" size=4 [value]='anno.label' (keyup)='anno.label=$event.target.value' />
+          id: <input type="text" size=4 [value]='anno.id' (keyup)='anno.id=$event.target.value' />
         </div>
-        <div class='col-sm-8'>
-          <ion-range-slider #sliderElement type="double" min="0" max="{{get_duration()}}" from="{{anno.start}}" to="{{anno.end}}" from_shadow="true" to_shadow="true" grid="true" grid_num="10" prefix="" postfix=" sec" decorate_both="false" step=0.001 (onChange)="onScroll($event, anno, i)"
-              (onFinish)="onScrollSave($event, anno, i)"></ion-range-slider>
+        <div class='col-sm-4'>
+          Bounding Box: {{anno.bbox[0]}},{{anno.bbox[1]}},{{anno.bbox[2]}},{{anno.bbox[3]}}
+        </div>
+        <div class='col-sm-4'>
+          <div *ngIf='anno.lms.length>0'>
+            Landmarks generater
+          </div>
+          <div *ngIf='anno.lms.length<=0'>
+            Waiting to generate Landmarks.
+          </div>
         </div>
         <div class='col-sm-2'>
-          <a class='btn btn-default' (click)="playAnnotation(anno)">Play</a>
-          <a class='btn btn-default' (click)="removeAnnotation(i)">x</a>
+          <a class='btn btn-danger' (click)="removeAnnotation(i)">Del</a>
         </div>
       </div>
       <div *ngIf="isLoading; else noannotation">Loading</div>
 
     </div>
   </div>
-
-
-
 </div>
 <!-- /container -->
